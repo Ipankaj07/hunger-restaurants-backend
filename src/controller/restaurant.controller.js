@@ -22,11 +22,9 @@ router.get('/', async (req, res) => {
             query.payment_methods = { $in: payment_methods.split(',') };
         }
 
-        let costOfOnePerson = await Restaurant.find({}, { cost_for_one: 1, _id: 0 });
-
-        if(cost_for_two){
-            costOfOnePerson = costOfOnePerson.filter(cost => cost.cost_for_one <= parseInt(cost_for_two));
-            query.cost_for_one = { $in: costOfOnePerson.map(cost => cost.cost_for_one) };
+        if (cost_for_two) {
+            const cost_for_one = parseInt(cost_for_two) / 2;
+            query.cost_for_one = { $lte: cost_for_one };
         }
 
         const restaurants = await Restaurant.find(query)
